@@ -1,5 +1,5 @@
 from datetime import datetime, timedelta
-from jose import jwt
+from jose import jwt, JWTError
 
 from config.settings import JWT_SECRET_KEY
 
@@ -18,3 +18,17 @@ def create_access_token(data: dict):
         JWT_SECRET_KEY,
         algorithm=ALGORITHM
     )
+
+
+def verify_token(token: str):
+    try:
+        payload = jwt.decode(
+            token,
+            JWT_SECRET_KEY,
+            algorithms=[ALGORITHM]
+        )
+
+        return payload
+
+    except JWTError:
+        return None
