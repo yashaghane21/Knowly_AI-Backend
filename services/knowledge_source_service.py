@@ -1,11 +1,14 @@
-import os
-import uuid
-
 from datetime import datetime
 
 from repository.knowledge_source_repository import (
     KnowledgeSourceRepository
 )
+
+from services.storage.factory import (
+    StorageFactory
+)
+
+from services.document_processor_service import DocumentProcessorService
 
 
 class KnowledgeSourceService:
@@ -16,17 +19,9 @@ class KnowledgeSourceService:
         current_user
     ):
 
-        extension = file.filename.split(".")[-1]
+        storage = StorageFactory.get_storage()
 
-        unique_name = f"{uuid.uuid4()}.{extension}"
-
-        file_path = os.path.join(
-            "uploads",
-            unique_name
-        )
-
-        with open(file_path, "wb") as buffer:
-            buffer.write(file.file.read())
+        file_info = storage.upload_file(file)
 
         source_data = {
             "userId": str(current_user["_id"]),
@@ -38,8 +33,14 @@ class KnowledgeSourceService:
             "status": "uploaded",
 
             "metadata": {
-                "filePath": file_path,
-                "fileSize": os.path.getsize(file_path)
+                "storageProvider":
+                    file_info["storageProvider"],
+
+                "storageKey":
+                    file_info["storageKey"],
+
+                "fileSize":
+                    file.file.tell()
             },
 
             "createdAt": datetime.utcnow()
@@ -48,6 +49,11 @@ class KnowledgeSourceService:
         result = KnowledgeSourceRepository.create(
             source_data
         )
+
+        DocumentProcessorService.process_pdf(
+        str(result.inserted_id)
+)
+
 
         return {
             "source_id": str(result.inserted_id),
