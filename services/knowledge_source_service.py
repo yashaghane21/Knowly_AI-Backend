@@ -9,7 +9,9 @@ from services.storage.factory import (
 )
 
 from services.document_processor_service import DocumentProcessorService
-
+from services.ingestion_pipeline_service import (
+    IngestionPipelineService
+)
 
 class KnowledgeSourceService:
 
@@ -50,9 +52,13 @@ class KnowledgeSourceService:
             source_data
         )
 
-        DocumentProcessorService.process_pdf(
-        str(result.inserted_id)
-)
+        source_id = str(
+            result.inserted_id
+        )
+
+        IngestionPipelineService.run(           # call ingestion pipeline 
+            source_id
+        )
 
 
         return {

@@ -28,3 +28,9 @@ def root():
     return {
         "message": "Knowly AI Backend Running"
     }
+
+from api.routes.chat import (
+    router as chat_router
+)
+
+app.include_router(chat_router)

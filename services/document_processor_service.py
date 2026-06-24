@@ -15,7 +15,6 @@ from services.storage.factory import (
 )
 
 
-
 class DocumentProcessorService:
 
     @staticmethod
@@ -31,19 +30,19 @@ class DocumentProcessorService:
             raise Exception(
                 "Knowledge source not found"
             )
-        
+
         storage = StorageFactory.get_storage()
 
         pdf_path = storage.read_file(
             source["metadata"]["storageKey"]
         )
 
-        pdf = fitz.open(pdf_path)
-
         full_text = ""
 
-        for page in pdf:
-            full_text += page.get_text()
+        with fitz.open(pdf_path) as pdf:
+
+            for page in pdf:
+                full_text += page.get_text()
 
         document_data = {
             "sourceId": str(source["_id"]),
@@ -57,7 +56,7 @@ class DocumentProcessorService:
             "createdAt": datetime.utcnow()
         }
 
-        DocumentRepository.create(
+        result = DocumentRepository.create(
             document_data
         )
 
@@ -66,9 +65,12 @@ class DocumentProcessorService:
             "processed"
         )
 
-        # print("hii yash aghane ",full_text)
-
         return {
-            "message": "Document processed",
-            "characters": len(full_text)
+            "document_id": str(
+                result.inserted_id
+            ),
+            "characters": len(
+                full_text
+            ),
+            "status": "processed"
         }
