@@ -19,7 +19,7 @@ router = APIRouter(
     tags=["Chat"]
 )
 
-
+chat_service = ChatService()
 class AskQuestionRequest(BaseModel):
     question: str
 
@@ -29,8 +29,6 @@ def ask_question(
     request: AskQuestionRequest,
     current_user=Depends(get_current_user)
 ):
-
-    chat_service = ChatService()
 
     return chat_service.ask(
         question=request.question,

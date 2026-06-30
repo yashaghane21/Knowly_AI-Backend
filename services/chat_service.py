@@ -1,4 +1,5 @@
 from google import genai
+from google.genai import errors
 
 from config.settings import GEMINI_API_KEY
 
@@ -66,19 +67,66 @@ User question:
 {question}
 """
 
-        response = self.client.models.generate_content(
-            model="gemini-2.5-flash",
-            contents=prompt
-        )
+        try:
+            response = self.client.models.generate_content(
+                model="gemini-2.5-flash",
+                contents=prompt
+            )
+
+        except errors.ClientError as error:
+
+            if error.code == 429:
+                return {
+                    "answer": (
+                        "The AI service has reached its request limit. "
+                        "Please try again shortly."
+                    ),
+                    "sources": self._format_sources(
+                        retrieved_chunks
+                    ),
+                    "error_code": "LLM_RATE_LIMITED"
+                }
+
+            raise
+
+        except errors.ServerError as error:
+
+            if error.code == 503:
+                return {
+                    "answer": (
+                        "The AI model is temporarily busy. "
+                        "Please try again in a few seconds."
+                    ),
+                    "sources": self._format_sources(
+                        retrieved_chunks
+                    ),
+                    "error_code": "LLM_UNAVAILABLE"
+                }
+
+            raise
 
         return {
             "answer": response.text,
-            "sources": [
-                {
-                    "document_id": chunk["document_id"],
-                    "chunk_index": chunk["chunk_index"],
-                    "score": round(chunk["score"], 3)
-                }
-                for chunk in retrieved_chunks
-            ]
+            "sources": self._format_sources(
+                retrieved_chunks
+            )
         }
+
+    @staticmethod
+    def _format_sources(
+        retrieved_chunks
+    ):
+
+        return [
+            {
+                "document_id": chunk["document_id"],
+
+                "chunk_index": chunk["chunk_index"],
+
+                "score": round(
+                    chunk["score"],
+                    3
+                )
+            }
+            for chunk in retrieved_chunks
+        ]

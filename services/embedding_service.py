@@ -1,5 +1,6 @@
-from sentence_transformers import SentenceTransformer
-
+from services.embedding_model import (
+    EmbeddingModel
+)
 from repository.chunk_repository import (
     ChunkRepository
 )
@@ -8,9 +9,7 @@ from repository.chunk_repository import (
 class EmbeddingService:
 
     def __init__(self):
-        self.model = SentenceTransformer(
-            "all-MiniLM-L6-v2"
-        )
+       self.model = EmbeddingModel.get_model()
 
     def process_document(
         self,

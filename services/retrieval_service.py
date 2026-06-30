@@ -1,14 +1,14 @@
-from sentence_transformers import SentenceTransformer
-
 from db.mongodb import db
+
+from services.embedding_model import (
+    EmbeddingModel
+)
 
 
 class RetrievalService:
 
     def __init__(self):
-        self.model = SentenceTransformer(
-            "all-MiniLM-L6-v2"
-        )
+        self.model = EmbeddingModel.get_model()
 
     def search(
         self,
@@ -63,7 +63,6 @@ class RetrievalService:
         )
 
         unique_results = []
-
         seen = set()
 
         for result in results:
@@ -79,21 +78,15 @@ class RetrievalService:
             seen.add(unique_key)
 
             unique_results.append({
-                "chunk_id": str(
-                    result["_id"]
-                ),
+                "chunk_id": str(result["_id"]),
 
-                "document_id":
-                    result["documentId"],
+                "document_id": result["documentId"],
 
-                "chunk_index":
-                    result["chunkIndex"],
+                "chunk_index": result["chunkIndex"],
 
-                "text":
-                    result["chunkText"],
+                "text": result["chunkText"],
 
-                "score":
-                    result["score"]
+                "score": result["score"]
             })
 
         return unique_results
