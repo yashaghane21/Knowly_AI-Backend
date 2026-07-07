@@ -5,7 +5,7 @@ from fastapi import (
 
 from pydantic import BaseModel
 
-from services.chat_service import (
+from services.llm.chat_service import (
     ChatService
 )
 

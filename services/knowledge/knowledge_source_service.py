@@ -8,8 +8,8 @@ from services.storage.factory import (
     StorageFactory
 )
 
-from services.document_processor_service import DocumentProcessorService
-from services.ingestion_pipeline_service import (
+from services.ingestion.document_processor_service import DocumentProcessorService
+from services.ingestion.ingestion_pipeline_service import (
     IngestionPipelineService
 )
 

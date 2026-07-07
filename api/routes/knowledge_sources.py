@@ -7,7 +7,7 @@ from fastapi import (
 
 from utils.dependencies import get_current_user
 
-from services.knowledge_source_service import (
+from services.knowledge.knowledge_source_service import (
     KnowledgeSourceService
 )
 

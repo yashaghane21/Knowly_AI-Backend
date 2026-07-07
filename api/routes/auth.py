@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException
 
 from schemas.auth import RegisterRequest, LoginRequest
-from services.auth_service import AuthService
+from services.auth.auth_service import AuthService
 
 router = APIRouter(
     prefix="/auth",

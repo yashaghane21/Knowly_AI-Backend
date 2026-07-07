@@ -1,5 +1,5 @@
-from services.integrations.google_drive_connector import GoogleDriveConnector
-from services.integrations.gmail_connector import GmailConnector
+from services.integrations.google.google_drive_connector import GoogleDriveConnector
+from services.integrations.google.gmail_connector import GmailConnector
 
 
 class ConnectorManager:

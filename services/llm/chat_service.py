@@ -3,7 +3,7 @@ from google.genai import errors
 
 from config.settings import GEMINI_API_KEY
 
-from services.retrieval_service import (
+from services.retrieval.retrieval_service import (
     RetrievalService
 )
 

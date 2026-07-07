@@ -1,12 +1,12 @@
-from services.document_processor_service import (
+from services.ingestion.document_processor_service import (
     DocumentProcessorService
 )
 
-from services.chunking_service import (
+from services.ingestion.chunking_service import (
     ChunkingService
 )
 
-from services.embedding_service import (
+from services.embeddings.embedding_service import (
     EmbeddingService
 )
 
